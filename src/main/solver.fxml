@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import comps.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
+	<Display fx:id="display" alignment="CENTER" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS" />
+   <Button fx:id="solve" contentDisplay="CENTER" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#solve" text="Solve" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+      <GridPane.margin>
+         <Insets bottom="2.0" left="2.0" right="1.0" top="2.0" />
+      </GridPane.margin>
+      <font>
+         <Font name="System Bold" size="14.0" />
+      </font>
+   </Button>
+   <Button fx:id="generate" contentDisplay="CENTER" focusTraversable="false" layoutX="12.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#generate" text="Generate" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <font>
+         <Font name="System Bold" size="14.0" />
+      </font>
+      <GridPane.margin>
+         <Insets bottom="2.0" left="1.0" right="1.0" top="2.0" />
+      </GridPane.margin>
+   </Button>
+    <MenuBar GridPane.columnSpan="2147483647">
+        <Menu mnemonicParsing="false" text="Difficulty">
+            <MenuItem mnemonicParsing="false" onAction="#difficultyEasy" text="Easy" />
+         <MenuItem mnemonicParsing="false" onAction="#difficultyNormal" text="Normal" />
+         <MenuItem mnemonicParsing="false" onAction="#difficultyHard" text="Hard" />
+        </Menu>
+        <Menu mnemonicParsing="false" text="Size">
+            <MenuItem mnemonicParsing="false" onAction="#sizeSmall" text="Small" />
+            <MenuItem mnemonicParsing="false" onAction="#sizeNormal" text="Normal" />
+            <MenuItem mnemonicParsing="false" onAction="#sizeBig" text="Big" />
+        </Menu>
+        <Menu mnemonicParsing="false" text="Speed">
+            <MenuItem mnemonicParsing="false" onAction="#rate1milli" text="1 Milli" />
+            <MenuItem mnemonicParsing="false" onAction="#rate5milli" text="5 Milli" />
+         <MenuItem mnemonicParsing="false" onAction="#rate20milli" text="20 Milli" />
+         <MenuItem mnemonicParsing="false" onAction="#rate50milli" text="50 Milli" />
+         <MenuItem mnemonicParsing="false" onAction="#rate100milli" text="100 Milli" />
+        </Menu>
+    </MenuBar>
+   <Label fx:id="stepsDisplay" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Steps: " textAlignment="CENTER" GridPane.columnIndex="3" GridPane.rowIndex="1">
+      <GridPane.margin>
+         <Insets bottom="2.0" left="1.0" right="1.0" top="2.0" />
+      </GridPane.margin>
+      <font>
+         <Font size="13.0" />
+      </font>
+   </Label>
+   <Button fx:id="check" contentDisplay="CENTER" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#check" text="Check" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
+      <font>
+         <Font name="System Bold" size="14.0" />
+      </font>
+      <GridPane.margin>
+         <Insets bottom="2.0" left="1.0" right="1.0" top="2.0" />
+      </GridPane.margin>
+   </Button>
+   <columnConstraints>
+      <ColumnConstraints hgrow="ALWAYS" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
+      <ColumnConstraints hgrow="NEVER" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
+      <ColumnConstraints hgrow="NEVER" maxWidth="90.0" minWidth="90.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="NEVER" maxWidth="90.0" minWidth="90.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
+      <RowConstraints />
+   </rowConstraints>
+
+</GridPane>
