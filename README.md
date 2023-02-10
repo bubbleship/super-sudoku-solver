@@ -5,7 +5,7 @@
 ![Stars](https://img.shields.io/github/stars/bubbleship/sudoku-solver)
 ![Issues](https://img.shields.io/github/issues/bubbleship/sudoku-solver)
 
-## A visualizer for the sudoku solving backtracking algorithm.
+## A visualizer for the sudoku solving backtracking algorithm
 
 ### Description
 
