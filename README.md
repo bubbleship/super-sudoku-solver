@@ -20,6 +20,6 @@ To run this program first download the executable .jar file from the
 [releases](https://github.com/bubbleship/sudoku-solver/releases) section of
 this repository and simply run it as it is.
 
-### Requierments
+### Requirements
 
 * Java 1.8 and newer.
