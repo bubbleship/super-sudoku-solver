@@ -90,7 +90,6 @@ public class Controller implements Initializable {
 
 	public void setSize(Size size) {
 		Rules.setSize(size);
-		Generator.update();
 		display.rebuild();
 		setGrid();
 	}
@@ -110,9 +109,7 @@ public class Controller implements Initializable {
 	}
 
 	private void setGrid() {
-		char[][] tmp = Generator.generateGridSafe();
-		if (tmp == null) return;
-		grid = tmp;
+		grid = Generator.generateGrid();
 		display.setGrid(grid);
 		check.setDisable(false);
 	}

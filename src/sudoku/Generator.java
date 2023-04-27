@@ -1,134 +1,103 @@
 package sudoku;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static sudoku.Commons.getFirstEmpty;
+import static sudoku.Rules.BIG_SIZE;
 import static sudoku.Rules.EMPTY_TILE;
+import static sudoku.Rules.NORMAL_SIZE;
+import static sudoku.Rules.SMALL_SIZE;
 import static sudoku.Rules.getDifficulty;
+import static sudoku.Rules.getSideSize;
 import static sudoku.Rules.getSize;
 import static sudoku.Rules.getValidChars;
 import static sudoku.Rules.isValidPlacement;
-import static sudoku.Tools.copyGrid;
 import static sudoku.Tools.toList;
 
 public class Generator {
+	private static final Random random = new Random();
 	private static List<Character> chars;
 	private static char[] validChars;
-	private static int counter;
-	private static volatile boolean resume = true;
 
-	static {
-		update();
-	}
-
-	public static void update() {
+	public static char[][] generateGrid() {
 		chars = toList(getValidChars());
 		validChars = getValidChars();
-	}
 
-	public static char[][] generateGridSafe() {
-		final char[][][] grid = {null};
-
-		Thread thread = new Thread(() -> grid[0] = generateGridImpl());
-
-		thread.start();
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				resume = false;
-			}
-		}, 2000);
-
-		try {
-			thread.join();
-		} catch (InterruptedException ignored) {
-		} finally {
-			timer.cancel();
-		}
-
-		return grid[0];
-	}
-
-	private static char[][] generateGridImpl() {
-		resume = true;
-		Random random = new Random();
-		char[][] grid = generateEmptyGrid();
-		int attempts = getDifficulty();
-		int row;
-		int column;
-		char backup;
-
+		final char[][] grid = generateEmptyGrid();
 		generateFullSudoku(grid);
-		while (attempts > 0 && resume) {
-			do {
-				row = random.nextInt(validChars.length);
-				column = random.nextInt(validChars.length);
-			} while (grid[row][column] == EMPTY_TILE);
-			backup = grid[row][column];
-			grid[row][column] = EMPTY_TILE;
-			counter = 0;
-			countSolutions(copyGrid(grid));
-			if (counter != 1) {
-				grid[row][column] = backup;
-				attempts--;
-			}
-		}
-
-		if (!resume) grid = null;
+		makePuzzle(grid);
 		return grid;
 	}
 
-	private static boolean countSolutions(char[][] grid) {
-		if (!resume) return true;
-		Point emptyPos = getFirstEmpty(grid);
-		if (emptyPos == null) return true;
+	private static void makePuzzle(char[][] grid) {
+		int toRemove = toRemove();
+		int row;
+		int column;
 
-		int row = emptyPos.x;
-		int column = emptyPos.y;
+		while (toRemove > 0) {
+			do {
+				row = random.nextInt(getSize());
+				column = random.nextInt(getSize());
+			} while (grid[row][column] == EMPTY_TILE);
 
-		for (char c : validChars) {
-			if (isValidPlacement(grid, c, row, column)) {
-				grid[row][column] = c;
-				if (isGridFull(grid)) {
-					counter++;
-					break;
-				} else if (countSolutions(grid)) return true;
-				grid[row][column] = EMPTY_TILE;
-			}
+			grid[row][column] = EMPTY_TILE;
+			toRemove--;
 		}
-		return false;
 	}
 
-	private static boolean generateFullSudoku(char[][] grid) {
-		if (!resume) return true;
+	private static int toRemove() {
+		switch (getSize()) {
+			case SMALL_SIZE:
+				return getSideSize() + getDifficulty() * (random.nextInt(getSideSize()) + 2);
+			case NORMAL_SIZE:
+				return getSize() + getDifficulty() * (random.nextInt(getSideSize()) + 8);
+			case BIG_SIZE:
+				return getSize() * getSideSize() + getDifficulty() * (random.nextInt(getSideSize()) + 14);
+			default:
+				throw new IllegalStateException("Unexpected value: " + getSize());
+		}
+	}
+
+	private static void generateFullSudoku(char[][] grid) {
+		if (getSize() != SMALL_SIZE)
+			diagonalPlacement(grid); // With a 4x4 grid this optimization step is not critical and often generates impossible puzzles.
+		randomizedSolver(grid);
+	}
+
+	private static void diagonalPlacement(char[][] grid) {
+		final int size = getSize(), sideSide = getSideSize();
+
+		for (int sectionCorner = 0; sectionCorner < size; sectionCorner += sideSide) {
+			Collections.shuffle(chars);
+			int i = 0;
+			for (int row = 0; row < sideSide; row++)
+				for (int column = 0; column < sideSide; column++)
+					grid[sectionCorner + row][sectionCorner + column] = chars.get(i++);
+		}
+	}
+
+	private static boolean randomizedSolver(char[][] grid) {
 		Point emptyPos = getFirstEmpty(grid);
 		if (emptyPos == null) return true;
 
 		int row = emptyPos.x;
 		int column = emptyPos.y;
 
-		Collections.shuffle(chars);
-		for (char c : chars)
-			if (isValidPlacement(grid, c, row, column)) {
-				grid[row][column] = c;
-				if (isGridFull(grid) || generateFullSudoku(grid)) return true;
-				grid[row][column] = EMPTY_TILE;
-			}
-		return false;
-	}
+		final int length = validChars.length, start = random.nextInt(length);
+		boolean beganCircle = false;
+		for (int i = start; i != start || !beganCircle; i = i + 1 < length ? i + 1 : 0, beganCircle = true) {
+			char value = validChars[i];
+			if (!isValidPlacement(grid, value, row, column)) continue;
+			grid[row][column] = value;
+			if (randomizedSolver(grid)) return true;
+			grid[row][column] = EMPTY_TILE;
+		}
 
-	private static boolean isGridFull(char[][] grid) {
-		for (char[] row : grid)
-			for (char c : row)
-				if (c == EMPTY_TILE) return false;
-		return true;
+		return false;
 	}
 
 	private static char[][] generateEmptyGrid() {

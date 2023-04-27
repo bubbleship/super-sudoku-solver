@@ -8,9 +8,9 @@ public final class Rules {
 	private static final int SMALL_SIDE_SIZE = 2;
 	private static final int NORMAL_SIDE_SIZE = 3;
 	private static final int BIG_SIDE_SIZE = 4;
-	private static final int SMALL_SIZE = SMALL_SIDE_SIZE * SMALL_SIDE_SIZE;
-	private static final int NORMAL_SIZE = NORMAL_SIDE_SIZE * NORMAL_SIDE_SIZE;
-	private static final int BIG_SIZE = BIG_SIDE_SIZE * BIG_SIDE_SIZE;
+	public static final int SMALL_SIZE = SMALL_SIDE_SIZE * SMALL_SIDE_SIZE;
+	public static final int NORMAL_SIZE = NORMAL_SIDE_SIZE * NORMAL_SIDE_SIZE;
+	public static final int BIG_SIZE = BIG_SIDE_SIZE * BIG_SIDE_SIZE;
 	private static final int DEFAULT_DIFFICULTY = 1;
 
 	private static char[] validChars = NORMAL_CHARSET;
