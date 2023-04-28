@@ -1,6 +1,6 @@
 package sudoku;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
