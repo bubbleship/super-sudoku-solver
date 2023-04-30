@@ -1,8 +1,11 @@
 package sudoku;
 
+import javafx.util.Pair;
+
 import java.awt.Point;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -16,36 +19,86 @@ import static sudoku.Rules.getSideSize;
 import static sudoku.Rules.getSize;
 import static sudoku.Rules.getValidChars;
 import static sudoku.Rules.isValidPlacement;
+import static sudoku.Tools.copyGrid;
 import static sudoku.Tools.toList;
 
 public class Generator {
+	/**
+	 * An upper bound representing the maximum number of calls the {@link #countSolutions(char[][], int)}
+	 * method may call itself. This is to prevent the puzzle generation part from lingering on that step for
+	 * an overly extended period, which can make the entire application unresponsive.
+	 */
+	private static final int MAX_SOLUTIONS_CHECKER_CALLS_COUNT = 800_000;
+	/**
+	 * An upper bound representing the maximum number of calls the {@link #randomizedSolver(char[][])} method
+	 * may call itself. This is to prevent the complete sudoku generation part from lingering on that step
+	 * for an overly extended period, which can make the entire application unresponsive.
+	 */
+	private static final int MAX_RANDOMIZED_SOLVER_CALLS_COUNT = 6_000_000;
+
 	private static final Random random = new Random();
 	private static List<Character> chars;
 	private static char[] validChars;
+	/**
+	 * Used by {@link #countSolutions(char[][], int)} as a counter to enforce the limit denoted by
+	 * {@link #MAX_SOLUTIONS_CHECKER_CALLS_COUNT}.
+	 */
+	private static int solutionsCheckerCallsCount;
+	/**
+	 * Used by {@link #randomizedSolver(char[][])} as a counter to enforce the limit denoted by
+	 * {@link #MAX_RANDOMIZED_SOLVER_CALLS_COUNT}.
+	 */
+	private static int randomizedSolverCallsCount;
 
-	public static char[][] generateGrid() {
+	/**
+	 * Generates a sudoku puzzle. The dimensions and difficulty level of the resulting puzzle is determined
+	 * by the state of the {@link Rules} class.
+	 *
+	 * @return A {@link Pair} object where the key is a matrix of characters representing the sudoku puzzle
+	 * and the value is a matrix of characters representing its solution.
+	 */
+	public static Pair<char[][], char[][]> generateGrid() {
 		chars = toList(getValidChars());
 		validChars = getValidChars();
 
 		final char[][] grid = generateEmptyGrid();
 		generateFullSudoku(grid);
+		final char[][] solution = copyGrid(grid);
 		makePuzzle(grid);
-		return grid;
+		return new Pair<>(grid, solution);
 	}
 
 	private static void makePuzzle(char[][] grid) {
-		int toRemove = toRemove();
+		LinkedList<Point> tiles = new LinkedList<>();
+		int toRemove = toRemove(); // The number of empty tiles the resulting puzzle should have.
 		int row;
 		int column;
+		char backup;
+		/*
+		 * The number of times the following loop may attempt at removing a tile from the given grid. Failing
+		 * that many times will end the loop. This is to prevent the loop from potentially running forever.
+		 */
+		int retries = 10;
 
-		while (toRemove > 0) {
+		while (toRemove > 0 && retries > 0) {
 			do {
 				row = random.nextInt(getSize());
 				column = random.nextInt(getSize());
-			} while (grid[row][column] == EMPTY_TILE);
+				backup = grid[row][column];
+			} while (backup == EMPTY_TILE);
 
 			grid[row][column] = EMPTY_TILE;
-			toRemove--;
+			solutionsCheckerCallsCount = MAX_SOLUTIONS_CHECKER_CALLS_COUNT;
+			if (countSolutions(grid, 0) > 1) {
+				// Removing this tile would result in a puzzle with multiple solutions.
+				grid[row][column] = backup;
+				retries--;
+			} else {
+				toRemove--;
+				tiles.add(new Point(row, column));
+			}
+			// The solution counter method modifies the removed tiles so the following loop reverts that.
+			for (Point tile : tiles) grid[tile.x][tile.y] = EMPTY_TILE;
 		}
 	}
 
@@ -62,9 +115,30 @@ public class Generator {
 		}
 	}
 
+	private static int countSolutions(char[][] grid, int count) {
+		solutionsCheckerCallsCount--;
+		if (solutionsCheckerCallsCount < 0) return 2;
+		Point emptyPos = getFirstEmpty(grid);
+		if (emptyPos == null) return count + 1;
+
+		int row = emptyPos.x;
+		int column = emptyPos.y;
+
+		for (char value : validChars)
+			if (isValidPlacement(grid, value, row, column)) {
+				grid[row][column] = value;
+				count = countSolutions(grid, count);
+				if (count > 1) return count;
+			}
+
+		grid[row][column] = EMPTY_TILE;
+		return count;
+	}
+
 	private static void generateFullSudoku(char[][] grid) {
 		if (getSize() != SMALL_SIZE)
 			diagonalPlacement(grid); // With a 4x4 grid this optimization step is not critical and often generates impossible puzzles.
+		randomizedSolverCallsCount = MAX_RANDOMIZED_SOLVER_CALLS_COUNT;
 		randomizedSolver(grid);
 	}
 
@@ -81,6 +155,8 @@ public class Generator {
 	}
 
 	private static boolean randomizedSolver(char[][] grid) {
+		randomizedSolverCallsCount--;
+		if (randomizedSolverCallsCount < 0) return false;
 		Point emptyPos = getFirstEmpty(grid);
 		if (emptyPos == null) return true;
 
@@ -94,6 +170,7 @@ public class Generator {
 			if (!isValidPlacement(grid, value, row, column)) continue;
 			grid[row][column] = value;
 			if (randomizedSolver(grid)) return true;
+			if (randomizedSolverCallsCount < 0) return false;
 			grid[row][column] = EMPTY_TILE;
 		}
 

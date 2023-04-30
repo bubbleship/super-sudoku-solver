@@ -7,11 +7,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.util.Pair;
 import sudoku.Generator;
 import sudoku.Rules;
 import sudoku.Size;
-import sudoku.Solver;
-import sudoku.Tools;
 import sudoku.Visualizer;
 
 import java.net.URL;
@@ -20,6 +19,7 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
 	private char[][] grid;
+	private char[][] solution;
 	private Visualizer visualizer;
 	private boolean running = false;
 
@@ -65,8 +65,6 @@ public class Controller implements Initializable {
 	public void check() {
 		boolean allCorrect = true;
 		char[][] grid = display.getGrid();
-		char[][] solution = Tools.copyGrid(this.grid);
-		Solver.algorithm(null, solution);
 
 		for (int row = 0; row < grid.length; row++)
 			for (int column = 0; column < grid[row].length; column++) {
@@ -109,7 +107,9 @@ public class Controller implements Initializable {
 	}
 
 	private void setGrid() {
-		grid = Generator.generateGrid();
+		Pair<char[][], char[][]> pair = Generator.generateGrid();
+		grid = pair.getKey();
+		solution = pair.getValue();
 		display.setGrid(grid);
 		check.setDisable(false);
 	}
