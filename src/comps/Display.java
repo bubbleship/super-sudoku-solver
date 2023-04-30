@@ -86,4 +86,13 @@ public class Display extends GridPane {
 			}
 		}
 	}
+
+	public void showSolution(char[][] solution) {
+		for (int row = 0; row < solution.length; row++)
+			for (int column = 0; column < solution[row].length; column++) {
+				Tile tile = tiles[row][column];
+				tile.setValue(solution[row][column]);
+				tile.setBorder(Tile.TILE_DEFAULT_BORDER);
+			}
+	}
 }

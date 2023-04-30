@@ -44,12 +44,7 @@ public class Controller implements Initializable {
 		solve.setText(Strings.SKIP);
 		generate.setDisable(true);
 
-		visualizer.reset(grid, display, stepsDisplay);
-		visualizer.setOnFinished(event -> {
-			solve.setText(Strings.SOLVE);
-			generate.setDisable(false);
-			running = false;
-		});
+		visualizer.reset(grid, solution);
 		display.prepGrid(true);
 		visualizer.start();
 		running = true;
@@ -82,7 +77,7 @@ public class Controller implements Initializable {
 				display.setTileAt(row, column, grid[row][column], Tile.TILE_VALID_BORDER);
 				display.getTileAt(row, column).setModifiable(false);
 			}
-		this.grid = grid;
+
 		check.setDisable(true);
 	}
 
@@ -103,7 +98,12 @@ public class Controller implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		setGrid();
-		visualizer = new Visualizer();
+		visualizer = new Visualizer(display, stepsDisplay, event -> {
+			solve.setText(Strings.SOLVE);
+			generate.setDisable(false);
+			check.setDisable(false);
+			running = false;
+		});
 	}
 
 	private void setGrid() {
