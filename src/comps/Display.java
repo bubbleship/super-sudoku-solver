@@ -59,9 +59,9 @@ public class Display extends GridPane {
 		tile.setBorder(border);
 	}
 
-	public void prepGrid(boolean prep) {
+	public void prepGrid(boolean blocked) {
 		for (Tile[] row : tiles)
-			for (Tile tile : row) tile.prep(prep);
+			for (Tile tile : row) tile.prep(blocked);
 	}
 
 	public char[][] getGrid() {
@@ -73,9 +73,9 @@ public class Display extends GridPane {
 		return grid;
 	}
 
-	public void setGrid(char[][] grid) {
-		for (int i = 0; i < grid.length; i++) {
-			char[] row = grid[i];
+	public void showPuzzle(char[][] puzzle) {
+		for (int i = 0; i < puzzle.length; i++) {
+			char[] row = puzzle[i];
 			for (int j = 0; j < row.length; j++) {
 				char value = row[j];
 				Tile tile = tiles[i][j];

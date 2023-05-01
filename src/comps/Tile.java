@@ -59,7 +59,7 @@ public class Tile extends Label {
 	public void setValue(char value) {
 		this.value = value;
 		if (value == EMPTY_TILE) setText("");
-		else setText(value + "");
+		else setText(String.valueOf(value));
 	}
 
 	public void setModifiable(boolean modifiable) {

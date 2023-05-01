@@ -110,7 +110,7 @@ public class Controller implements Initializable {
 		Pair<char[][], char[][]> pair = Generator.generateGrid();
 		grid = pair.getKey();
 		solution = pair.getValue();
-		display.setGrid(grid);
+		display.showPuzzle(grid);
 		check.setDisable(false);
 	}
 
