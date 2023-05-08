@@ -66,17 +66,15 @@ public class Controller implements Initializable {
 				char value = grid[row][column];
 				if (value != solution[row][column]) {
 					allCorrect = false;
-					display.setTileAt(row, column, value, Tile.TILE_INVALID_BORDER);
+					display.getTileAt(row, column).setBorder(Tile.TILE_INVALID_BORDER);
 				}
 			}
 
 		if (!allCorrect) return;
 
 		for (int row = 0; row < grid.length; row++)
-			for (int column = 0; column < grid[row].length; column++) {
-				display.setTileAt(row, column, grid[row][column], Tile.TILE_VALID_BORDER);
-				display.getTileAt(row, column).setModifiable(false);
-			}
+			for (int column = 0; column < grid[row].length; column++)
+				display.getTileAt(row, column).setModifiable(false).setBorder(Tile.TILE_VALID_BORDER);
 
 		check.setDisable(true);
 	}

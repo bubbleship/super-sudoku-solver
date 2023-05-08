@@ -1,6 +1,5 @@
 package comps;
 
-import javafx.scene.layout.Border;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -51,12 +50,6 @@ public class Display extends GridPane {
 
 	public Tile getTileAt(int row, int column) {
 		return tiles[row][column];
-	}
-
-	public void setTileAt(int row, int column, char c, Border border) {
-		Tile tile = tiles[row][column];
-		tile.setValue(c);
-		tile.setBorder(border);
 	}
 
 	public void prepGrid(boolean blocked) {

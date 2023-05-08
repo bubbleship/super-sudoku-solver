@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Border;
 import javafx.util.Duration;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -21,15 +21,14 @@ import static sudoku.Rules.isValidPlacement;
 
 public class Visualizer {
 	private static final long DEFAULT_RATE = 20;
-
-	private char[][] grid;
-	private char[][] solution;
 	private static char[] validChars;
 	private final Display display;
 	private final Label stepsDisplay;
 	private final Timeline timeline;
-	private long rate = DEFAULT_RATE;
 	private final Queue<Step> steps;
+	private char[][] grid;
+	private char[][] solution;
+	private long rate = DEFAULT_RATE;
 
 	public Visualizer(Display display, Label stepsDisplay, EventHandler<ActionEvent> onVisualizerFinishedHandler) {
 		this.display = display;
@@ -40,52 +39,6 @@ public class Visualizer {
 			timeline.getKeyFrames().clear();
 		});
 		steps = new LinkedList<>();
-	}
-
-	public void reset(char[][] grid, char[][] solution) {
-		this.grid = grid;
-		this.solution = solution;
-	}
-
-	public void setUpdateRate(long rate) {
-		this.rate = rate;
-		if (steps.isEmpty()) return;
-		timeline.stop();
-		timeline.setCycleCount(steps.size());
-		timeline.getKeyFrames().clear();
-		timeline.getKeyFrames().add(getFrame());
-		timeline.play();
-	}
-
-	public void start() {
-		validChars = Rules.getValidChars();
-		recordAlgorithmSteps(steps, Tools.copyGrid(grid));
-		stepsDisplay.setText(Strings.STEPS_DISPLAY_PREFIX + steps.size());
-
-		if (steps.size() == 0) {
-			skip();
-			return;
-		}
-		timeline.setCycleCount(steps.size());
-		timeline.getKeyFrames().add(getFrame());
-		timeline.play();
-	}
-
-	private KeyFrame getFrame() {
-		return new KeyFrame(Duration.millis(rate), event -> {
-			Step step = steps.poll();
-			stepsDisplay.setText(Strings.STEPS_DISPLAY_PREFIX + steps.size());
-			if (step == null) return;
-			display.setTileAt(step.row, step.column, step.tileValue, step.tileBorder);
-		});
-	}
-
-	public void skip() {
-		timeline.stop();
-		steps.clear();
-		stepsDisplay.setText(Strings.STEPS_DISPLAY_PREFIX + 0);
-		display.showSolution(solution);
-		timeline.getOnFinished().handle(null);
 	}
 
 	/**
@@ -122,5 +75,51 @@ public class Visualizer {
 
 	private static void addStep(Queue<Step> steps, int row, int column, char value, Border border) {
 		steps.add(new Step(row, column, value, border));
+	}
+
+	public void reset(char[][] grid, char[][] solution) {
+		this.grid = grid;
+		this.solution = solution;
+	}
+
+	public void setUpdateRate(long rate) {
+		this.rate = rate;
+		if (steps.isEmpty()) return;
+		timeline.stop();
+		timeline.setCycleCount(steps.size());
+		timeline.getKeyFrames().clear();
+		timeline.getKeyFrames().add(getFrame());
+		timeline.play();
+	}
+
+	public void start() {
+		validChars = Rules.getValidChars();
+		recordAlgorithmSteps(steps, Tools.copyGrid(grid));
+		stepsDisplay.setText(Strings.STEPS_DISPLAY_PREFIX + steps.size());
+
+		if (steps.size() == 0) {
+			skip();
+			return;
+		}
+		timeline.setCycleCount(steps.size());
+		timeline.getKeyFrames().add(getFrame());
+		timeline.play();
+	}
+
+	private KeyFrame getFrame() {
+		return new KeyFrame(Duration.millis(rate), event -> {
+			Step step = steps.poll();
+			stepsDisplay.setText(Strings.STEPS_DISPLAY_PREFIX + steps.size());
+			if (step == null) return;
+			display.getTileAt(step.row, step.column).setValue(step.tileValue).setBorder(step.tileBorder);
+		});
+	}
+
+	public void skip() {
+		timeline.stop();
+		steps.clear();
+		stepsDisplay.setText(Strings.STEPS_DISPLAY_PREFIX + 0);
+		display.showSolution(solution);
+		timeline.getOnFinished().handle(null);
 	}
 }
