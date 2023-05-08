@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import sudoku.Generator;
 import sudoku.Rules;
@@ -22,6 +23,7 @@ public class Controller implements Initializable {
 	private char[][] solution;
 	private Visualizer visualizer;
 	private boolean running = false;
+	private boolean editorMode = false;
 
 	@FXML
 	public Display display;
@@ -41,10 +43,20 @@ public class Controller implements Initializable {
 			visualizer.skip();
 			return;
 		}
+		if (editorMode) {
+			editorMode = false;
+			grid = display.getGrid();
+			for (int row = 0; row < grid.length; row++)
+				for (int column = 0; column < grid[row].length; column++) {
+					Tile tile = display.getTileAt(row, column);
+					if (tile.getValue() != Rules.EMPTY_TILE)
+						tile.setModifiable(false).setBorder(Tile.TILE_DEFAULT_BORDER);
+				}
+		}
 		solve.setText(Strings.SKIP);
 		generate.setDisable(true);
 
-		visualizer.reset(grid, solution);
+		visualizer.reset(grid);
 		display.prepGrid(true);
 		visualizer.start();
 		running = true;
@@ -52,6 +64,7 @@ public class Controller implements Initializable {
 
 	@FXML
 	public void generate() {
+		editorMode = false;
 		display.requestFocus();
 		setGrid();
 	}
@@ -64,21 +77,37 @@ public class Controller implements Initializable {
 		for (int row = 0; row < grid.length; row++)
 			for (int column = 0; column < grid[row].length; column++) {
 				char value = grid[row][column];
-				if (value != solution[row][column]) {
-					allCorrect = false;
-					display.setTileAt(row, column, value, Tile.TILE_INVALID_BORDER);
-				}
+				if (solution == null) {
+					if (Rules.isValidPlacement(grid, value, row, column)) continue;
+				} else if (value == solution[row][column]) continue;
+
+				allCorrect = false;
+				display.getTileAt(row, column).setBorder(Tile.TILE_INVALID_BORDER);
 			}
 
 		if (!allCorrect) return;
 
 		for (int row = 0; row < grid.length; row++)
-			for (int column = 0; column < grid[row].length; column++) {
-				display.setTileAt(row, column, grid[row][column], Tile.TILE_VALID_BORDER);
-				display.getTileAt(row, column).setModifiable(false);
-			}
+			for (int column = 0; column < grid[row].length; column++)
+				display.getTileAt(row, column).setModifiable(false).setBorder(Tile.TILE_VALID_BORDER);
 
 		check.setDisable(true);
+	}
+
+	@FXML
+	public void clear() {
+		editorMode = true;
+		grid = null;
+		solution = null;
+
+		int length = Rules.getSize();
+		for (int row = 0; row < length; row++)
+			for (int column = 0; column < length; column++) {
+				Tile tile = display.getTileAt(row, column);
+				tile.setValue(Rules.EMPTY_TILE).setModifiable(true).setBorder(Tile.TILE_DEFAULT_BORDER);
+				tile.prep(false);
+				tile.setTextFill(Color.BLACK);
+			}
 	}
 
 	public void setSize(Size size) {

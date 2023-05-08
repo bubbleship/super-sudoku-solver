@@ -56,16 +56,18 @@ public class Tile extends Label {
 		return value;
 	}
 
-	public void setValue(char value) {
+	public Tile setValue(char value) {
 		this.value = value;
 		if (value == EMPTY_TILE) setText("");
 		else setText(String.valueOf(value));
+		return this;
 	}
 
-	public void setModifiable(boolean modifiable) {
+	public Tile setModifiable(boolean modifiable) {
 		this.modifiable = modifiable;
 		if (modifiable) setTextFill(Color.GRAY);
 		else setTextFill(Color.BLACK);
+		return this;
 	}
 
 	public void prep(boolean blocked) {
