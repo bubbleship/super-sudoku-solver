@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Border;
 import javafx.util.Duration;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -77,9 +77,8 @@ public class Visualizer {
 		steps.add(new Step(row, column, value, border));
 	}
 
-	public void reset(char[][] grid, char[][] solution) {
+	public void reset(char[][] grid) {
 		this.grid = grid;
-		this.solution = solution;
 	}
 
 	public void setUpdateRate(long rate) {
@@ -94,7 +93,8 @@ public class Visualizer {
 
 	public void start() {
 		validChars = Rules.getValidChars();
-		recordAlgorithmSteps(steps, Tools.copyGrid(grid));
+		solution = Tools.copyGrid(grid);
+		recordAlgorithmSteps(steps, solution);
 		stepsDisplay.setText(Strings.STEPS_DISPLAY_PREFIX + steps.size());
 
 		if (steps.size() == 0) {
