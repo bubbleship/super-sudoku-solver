@@ -6,6 +6,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import sudoku.Rules;
 
+import java.util.function.Consumer;
+
 public class Display extends GridPane {
 
 	private Tile[][] tiles;
@@ -53,8 +55,12 @@ public class Display extends GridPane {
 	}
 
 	public void prepGrid(boolean blocked) {
+		forEachTile(tile -> tile.prep(blocked));
+	}
+
+	public void forEachTile(Consumer<Tile> consumer) {
 		for (Tile[] row : tiles)
-			for (Tile tile : row) tile.prep(blocked);
+			for (Tile tile : row) consumer.accept(tile);
 	}
 
 	public char[][] getGrid() {

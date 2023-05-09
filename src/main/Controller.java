@@ -46,13 +46,12 @@ public class Controller implements Initializable {
 		if (editorMode) {
 			editorMode = false;
 			grid = display.getGrid();
-			for (int row = 0; row < grid.length; row++)
-				for (int column = 0; column < grid[row].length; column++) {
-					Tile tile = display.getTileAt(row, column);
-					if (tile.getValue() != Rules.EMPTY_TILE)
-						tile.setModifiable(false).setBorder(Tile.TILE_DEFAULT_BORDER);
-				}
+			display.forEachTile(tile -> {
+				if (tile.getValue() != Rules.EMPTY_TILE)
+					tile.setModifiable(false);
+			});
 		}
+		display.forEachTile(tile -> tile.setBorder(Tile.TILE_DEFAULT_BORDER));
 		solve.setText(Strings.SKIP);
 		generate.setDisable(true);
 
@@ -87,9 +86,7 @@ public class Controller implements Initializable {
 
 		if (!allCorrect) return;
 
-		for (int row = 0; row < grid.length; row++)
-			for (int column = 0; column < grid[row].length; column++)
-				display.getTileAt(row, column).setModifiable(false).setBorder(Tile.TILE_VALID_BORDER);
+		display.forEachTile(tile -> tile.setModifiable(false).setBorder(Tile.TILE_VALID_BORDER));
 
 		check.setDisable(true);
 	}
@@ -100,14 +97,11 @@ public class Controller implements Initializable {
 		grid = null;
 		solution = null;
 
-		int length = Rules.getSize();
-		for (int row = 0; row < length; row++)
-			for (int column = 0; column < length; column++) {
-				Tile tile = display.getTileAt(row, column);
-				tile.setValue(Rules.EMPTY_TILE).setModifiable(true).setBorder(Tile.TILE_DEFAULT_BORDER);
-				tile.prep(false);
-				tile.setTextFill(Color.BLACK);
-			}
+		display.forEachTile(tile -> {
+			tile.setValue(Rules.EMPTY_TILE).setModifiable(true).setBorder(Tile.TILE_DEFAULT_BORDER);
+			tile.prep(false);
+			tile.setTextFill(Color.BLACK);
+		});
 	}
 
 	public void setSize(Size size) {
