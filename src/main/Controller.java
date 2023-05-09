@@ -47,16 +47,19 @@ public class Controller implements Initializable {
 			editorMode = false;
 			grid = display.getGrid();
 			display.forEachTile(tile -> {
-				if (tile.getValue() != Rules.EMPTY_TILE)
-					tile.setModifiable(false);
+				if (tile.getValue() != Rules.EMPTY_TILE) tile.setModifiable(false);
+				else tile.setTextFill(Color.GRAY);
 			});
 		}
-		display.forEachTile(tile -> tile.setBorder(Tile.TILE_DEFAULT_BORDER));
 		solve.setText(Strings.SKIP);
 		generate.setDisable(true);
 
 		visualizer.reset(grid);
-		display.prepGrid(true);
+		display.setBlocked(true);
+		display.forEachTile(tile -> {
+			tile.setBorder(Tile.TILE_DEFAULT_BORDER);
+			if (tile.isModifiable()) tile.setValue(Rules.EMPTY_TILE);
+		});
 		visualizer.start();
 		running = true;
 	}
@@ -86,7 +89,7 @@ public class Controller implements Initializable {
 
 		if (!allCorrect) return;
 
-		display.forEachTile(tile -> tile.setModifiable(false).setBorder(Tile.TILE_VALID_BORDER));
+		display.forEachTile(tile -> tile.setBorder(Tile.TILE_VALID_BORDER));
 
 		check.setDisable(true);
 	}
@@ -97,9 +100,9 @@ public class Controller implements Initializable {
 		grid = null;
 		solution = null;
 
+		display.setBlocked(false);
 		display.forEachTile(tile -> {
 			tile.setValue(Rules.EMPTY_TILE).setModifiable(true).setBorder(Tile.TILE_DEFAULT_BORDER);
-			tile.prep(false);
 			tile.setTextFill(Color.BLACK);
 		});
 	}

@@ -21,11 +21,13 @@ public class Tile extends Label {
 	public static final Border TILE_VALID_BORDER = new Border(new BorderStroke(Color.GREEN, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.MEDIUM));
 	public static final Border TILE_INVALID_BORDER = new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.MEDIUM));
 
+	private final Display display;
 	private char value;
 	private boolean modifiable = true;
-	private boolean blocked = false;
 
-	public Tile() {
+	public Tile(Display display) {
+		this.display = display;
+
 		setAlignment(Pos.CENTER);
 		setBorder(TILE_DEFAULT_BORDER);
 
@@ -40,13 +42,13 @@ public class Tile extends Label {
 	}
 
 	private void processFocusChange(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-		if (!modifiable || blocked) return;
+		if (!modifiable || display.isBlocked()) return;
 		if (newValue) setBorder(TILE_FOCUS_BORDER);
 		else setBorder(TILE_DEFAULT_BORDER);
 	}
 
 	private void processKeyInput(KeyEvent event) {
-		if (!modifiable || blocked) return;
+		if (!modifiable || display.isBlocked()) return;
 		char c = event.getText().charAt(0);
 		if (Rules.isValidChar(c)) setValue(c);
 		else if (c == ' ') setValue(EMPTY_TILE);
@@ -65,17 +67,10 @@ public class Tile extends Label {
 
 	public Tile setModifiable(boolean modifiable) {
 		this.modifiable = modifiable;
-		if (modifiable) setTextFill(Color.GRAY);
-		else setTextFill(Color.BLACK);
 		return this;
 	}
 
-	public void prep(boolean blocked) {
-		this.blocked = blocked;
-		if (modifiable && blocked) {
-			setText("");
-			setTextFill(Color.DIMGRAY);
-			setBorder(TILE_DEFAULT_BORDER);
-		} else setModifiable(modifiable);
+	public boolean isModifiable() {
+		return modifiable;
 	}
 }
