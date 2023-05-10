@@ -108,6 +108,8 @@ public class Controller implements Initializable {
 	}
 
 	public void setSize(Size size) {
+		if (running) return;
+
 		Rules.setSize(size);
 		display.rebuild();
 		setGrid();
