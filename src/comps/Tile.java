@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import sudoku.Rules;
 
 import static sudoku.Rules.EMPTY_TILE;
@@ -21,6 +22,8 @@ public class Tile extends Label {
 	public static final Border TILE_VALID_BORDER = new Border(new BorderStroke(Color.GREEN, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.MEDIUM));
 	public static final Border TILE_INVALID_BORDER = new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.MEDIUM));
 
+	private static final Font TILE_FONT = new Font("System bold", 18);
+
 	private final Display display;
 	private char value;
 	private boolean modifiable = true;
@@ -30,6 +33,7 @@ public class Tile extends Label {
 
 		setAlignment(Pos.CENTER);
 		setBorder(TILE_DEFAULT_BORDER);
+		setFont(TILE_FONT);
 
 		setOnMouseClicked(this::processMouseClick);
 		focusedProperty().addListener(this::processFocusChange);
