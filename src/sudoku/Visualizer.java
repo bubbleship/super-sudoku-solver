@@ -7,6 +7,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Border;
 import javafx.util.Duration;
@@ -20,8 +21,19 @@ import static sudoku.Rules.EMPTY_TILE;
 import static sudoku.Rules.isValidPlacement;
 
 public class Visualizer {
+	/**
+	 * An upper bound representing the maximum number of calls the
+	 * {@link #recordAlgorithmSteps(Queue, char[][])} method may call itself. This is to prevent the
+	 * visualizer from consuming too much memory and lingering on that step for an overly extended period,
+	 * which can make the entire application unresponsive.
+	 */
+	private static final int MAX_ALGORITHM_RECORDER_CALLS_COUNT = 600_000;
 	private static final long DEFAULT_RATE = 20;
+
+	private static final Alert recorderStuckAlert = new Alert(Alert.AlertType.ERROR, "Sudoku puzzle is taking too long to solve");
 	private static char[] validChars;
+	private static int algorithmRecorderCallsCount;
+
 	private final Display display;
 	private final Label stepsDisplay;
 	private final Timeline timeline;
@@ -42,15 +54,18 @@ public class Visualizer {
 	}
 
 	/**
-	 * An implementation of the backtracking algorithm which was modified, so it can record the steps taken
-	 * by it to solve the given puzzle into the given data structure which can be later used for the
-	 * visualization part.
+	 * An implementation of the backtracking algorithm which was modified, so it records the steps taken by
+	 * it to solve the given puzzle. The steps are saved into the given data structure which can be later
+	 * used for the visualization part.
 	 *
 	 * @param steps A reference to a {@link Queue<Step>} object into which the steps taken by the algorithm
 	 *              are saved.
 	 * @param grid  A reference to a matrix of characters representing the puzzle to solve.
 	 */
 	private static boolean recordAlgorithmSteps(Queue<Step> steps, char[][] grid) {
+		algorithmRecorderCallsCount--;
+		if (algorithmRecorderCallsCount < 0) return false;
+
 		Point emptyPos = getFirstEmpty(grid);
 		if (emptyPos == null) return true;
 
@@ -60,16 +75,16 @@ public class Visualizer {
 		for (char value : validChars)
 			if (isValidPlacement(grid, value, row, column)) {
 				grid[row][column] = value;
-				addStep(steps, row, column, value, Tile.TILE_VALID_BORDER);
-				addStep(steps, row, column, value, Tile.TILE_DEFAULT_BORDER);
+				addStep(steps, row, column, value, Tile.TILE_VALID_BORDER); // Step: attempted placement is valid.
+				addStep(steps, row, column, value, Tile.TILE_DEFAULT_BORDER); // Step: continue to next tile (if there is one).
 				if (recordAlgorithmSteps(steps, grid)) return true;
-				grid[row][column] = EMPTY_TILE;
-				addStep(steps, row, column, value, Tile.TILE_DEFAULT_BORDER);
+				if (algorithmRecorderCallsCount < 0) return false;
 			} else {
-				addStep(steps, row, column, value, Tile.TILE_INVALID_BORDER);
+				addStep(steps, row, column, value, Tile.TILE_INVALID_BORDER); // Step: attempted placement is invalid.
 			}
 
-		addStep(steps, row, column, EMPTY_TILE, Tile.TILE_INVALID_BORDER);
+		grid[row][column] = EMPTY_TILE;
+		addStep(steps, row, column, EMPTY_TILE, Tile.TILE_INVALID_BORDER); // Step: backtracking to previous tile.
 		return false;
 	}
 
@@ -94,7 +109,15 @@ public class Visualizer {
 	public void start() {
 		validChars = Rules.getValidChars();
 		solution = Tools.copyGrid(grid);
+
+		algorithmRecorderCallsCount = MAX_ALGORITHM_RECORDER_CALLS_COUNT;
 		recordAlgorithmSteps(steps, solution);
+		if (algorithmRecorderCallsCount < 0) {
+			recorderStuckAlert.show();
+			skip();
+			return;
+		}
+
 		stepsDisplay.setText(Strings.STEPS_DISPLAY_PREFIX + steps.size());
 
 		if (steps.size() == 0) {
