@@ -115,6 +115,15 @@ public class Generator {
 		}
 	}
 
+	/**
+	 * A modified implementation of the backtracking algorithm designed to count the number of solutions the
+	 * given sudoku puzzle has. Used to ensure the given sudoku puzzle has a unique solution so the count
+	 * stops after the second solution is discovered.
+	 *
+	 * @param grid  A matrix of characters representing the given sudoku puzzle.
+	 * @param count Used internally to track the solution count over recursive calls.
+	 * @return {@code 2} if the given puzzle has more than one solution. Otherwise {@code 1}.
+	 */
 	private static int countSolutions(char[][] grid, int count) {
 		solutionsCheckerCallsCount--;
 		if (solutionsCheckerCallsCount < 0) return 2;
@@ -142,11 +151,20 @@ public class Generator {
 		randomizedSolver(grid);
 	}
 
+	/**
+	 * Fills all sections on the main diagonal of the empty sudoku grid represented by the given matrix.
+	 * Works by placing a shuffled copy of the sudoku charset into each section. Since all sections on the
+	 * main diagonal are independent of each other the resulting grid is guaranteed to not violate any sudoku
+	 * rule.
+	 *
+	 * @param grid A matrix of characters representing the empty sudoku grid to fill.
+	 */
 	private static void diagonalPlacement(char[][] grid) {
 		final int size = getSize(), sideSide = getSideSize();
 
-		for (int sectionCorner = 0; sectionCorner < size; sectionCorner += sideSide) {
-			Collections.shuffle(chars);
+		for (int sectionCorner = 0; sectionCorner < size; sectionCorner += sideSide) { // For each section.
+			Collections.shuffle(chars); // Shuffle a copy of the sudoku charset.
+			// Placing the shuffled sudoku charset into the section.
 			int i = 0;
 			for (int row = 0; row < sideSide; row++)
 				for (int column = 0; column < sideSide; column++)
@@ -154,6 +172,14 @@ public class Generator {
 		}
 	}
 
+	/**
+	 * A modified implementation of the backtracking algorithm designed to solve a sudoku puzzle with a
+	 * random modifier. Works by traversing the sudoku charset in a circular pattern starting from a random
+	 * index instead of starting from the first index.
+	 *
+	 * @param grid A matrix of characters representing the sudoku grid to solve.
+	 * @return A boolean values used internally by this method.
+	 */
 	private static boolean randomizedSolver(char[][] grid) {
 		randomizedSolverCallsCount--;
 		if (randomizedSolverCallsCount < 0) return false;
