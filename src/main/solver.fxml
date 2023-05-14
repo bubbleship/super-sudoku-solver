@@ -12,13 +12,13 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 <GridPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0" prefWidth="600.0"
-          xmlns="http://javafx.com/javafx/17.0.2-ea" fx:controller="main.Controller">
+		  xmlns="http://javafx.com/javafx/17.0.2-ea" fx:controller="main.Controller">
 	<Display fx:id="display" alignment="CENTER" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS"
-	         GridPane.rowIndex="2" GridPane.vgrow="ALWAYS"/>
+			 GridPane.rowIndex="2" GridPane.vgrow="ALWAYS"/>
 	<Button fx:id="solve" contentDisplay="CENTER" focusTraversable="false" maxHeight="1.7976931348623157E308"
-	        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#solve" text="Solve"
-	        textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1"
-	        GridPane.vgrow="ALWAYS">
+			maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#solve" text="Solve"
+			textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1"
+			GridPane.vgrow="ALWAYS">
 		<GridPane.margin>
 			<Insets bottom="2.0" left="2.0" right="1.0" top="2.0"/>
 		</GridPane.margin>
@@ -27,8 +27,8 @@
 		</font>
 	</Button>
 	<Button fx:id="generate" contentDisplay="CENTER" focusTraversable="false" layoutX="12.0" layoutY="10.0"
-	        maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-	        onAction="#generate" text="Generate" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+			maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+			onAction="#generate" text="Generate" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
 		<font>
 			<Font name="System Bold" size="14.0"/>
 		</font>
@@ -56,8 +56,8 @@
 		</Menu>
 	</MenuBar>
 	<Label fx:id="stepsDisplay" contentDisplay="CENTER" maxHeight="1.7976931348623157E308"
-	       maxWidth="1.7976931348623157E308" text="Steps: " textAlignment="CENTER" GridPane.columnIndex="3"
-	       GridPane.rowIndex="1">
+		   maxWidth="1.7976931348623157E308" text="Steps: " textAlignment="CENTER" GridPane.columnIndex="3"
+		   GridPane.rowIndex="1">
 		<GridPane.margin>
 			<Insets bottom="2.0" left="1.0" right="1.0" top="2.0"/>
 		</GridPane.margin>
@@ -66,8 +66,8 @@
 		</font>
 	</Label>
 	<Button fx:id="check" contentDisplay="CENTER" focusTraversable="false" maxHeight="1.7976931348623157E308"
-	        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#check" text="Check"
-	        textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
+			maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#check" text="Check"
+			textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
 		<font>
 			<Font name="System Bold" size="14.0"/>
 		</font>
@@ -76,8 +76,8 @@
 		</GridPane.margin>
 	</Button>
 	<Button contentDisplay="CENTER" focusTraversable="false" layoutX="191.0" layoutY="40.0"
-	        maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-	        onAction="#clear" text="Clear" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.rowIndex="1">
+			maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+			onAction="#clear" text="Clear" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.rowIndex="1">
 		<font>
 			<Font name="System Bold" size="14.0"/>
 		</font>
@@ -86,7 +86,7 @@
 		<ColumnConstraints hgrow="ALWAYS" maxWidth="90.0" minWidth="90.0" prefWidth="90.0"/>
 		<ColumnConstraints hgrow="NEVER" maxWidth="90.0" minWidth="90.0" prefWidth="90.0"/>
 		<ColumnConstraints hgrow="NEVER" maxWidth="90.0" minWidth="90.0" prefWidth="90.0"/>
-		<ColumnConstraints hgrow="NEVER" maxWidth="90.0" minWidth="90.0" prefWidth="100.0"/>
+		<ColumnConstraints hgrow="NEVER" maxWidth="110.0" minWidth="110.0" prefWidth="110.0"/>
 		<ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0"/>
 		<ColumnConstraints hgrow="NEVER" maxWidth="90.0" minWidth="90.0" prefWidth="90.0"/>
 	</columnConstraints>
