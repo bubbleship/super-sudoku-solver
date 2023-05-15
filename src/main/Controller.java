@@ -34,6 +34,8 @@ public class Controller implements Initializable {
 	@FXML
 	public Button check;
 	@FXML
+	public Button clear;
+	@FXML
 	public Label stepsDisplay;
 
 	@FXML
@@ -53,6 +55,7 @@ public class Controller implements Initializable {
 		}
 		solve.setText(Strings.SKIP);
 		generate.setDisable(true);
+		clear.setDisable(true);
 
 		visualizer.reset(grid);
 		display.setBlocked(true);
@@ -130,6 +133,7 @@ public class Controller implements Initializable {
 			solve.setText(Strings.SOLVE);
 			generate.setDisable(false);
 			check.setDisable(false);
+			clear.setDisable(false);
 			running = false;
 		});
 	}
