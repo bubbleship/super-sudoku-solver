@@ -53,9 +53,18 @@ public class Tile extends Label {
 
 	private void processKeyInput(KeyEvent event) {
 		if (!modifiable || display.isBlocked()) return;
+
+		switch (event.getCode()) {
+			case SPACE:
+			case BACK_SPACE:
+			case DIGIT0:
+			case NUMPAD0:
+				setValue(EMPTY_TILE);
+				return;
+		}
+
 		char c = event.getText().charAt(0);
 		if (Rules.isValidChar(c)) setValue(c);
-		else if (c == ' ') setValue(EMPTY_TILE);
 	}
 
 	public char getValue() {
