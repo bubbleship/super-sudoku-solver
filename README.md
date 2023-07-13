@@ -91,7 +91,7 @@ a puzzle and having the visualizer solve it. This can be done after clearing the
 In addition, it is also possible to enter a solution manually and check its correctness before
 starting the visualizer.
 
-### How To Run
+### How to Run
 
 To run this application first download the executable .jar file from the
 [releases](https://github.com/bubbleship/super-sudoku-solver/releases) section of
