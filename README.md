@@ -80,7 +80,7 @@ the algorithm to the UI.
   Menu options:
     * Easy (more hints)
     * Normal
-    * Hard (less hints)
+  * Hard (fewer hints)
 
 ### Notes
 
